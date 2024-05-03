@@ -20,7 +20,8 @@ const nunjucksConfig = {
 nunjucks.configure(appViews, nunjucksConfig)
 app.set('view engine', 'html')
 
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/data', express.static(path.join(__dirname, 'data')));
 
 app.get('/', (req, res) => {
     res.render('index', {audiobooks: m4bFiles})
@@ -61,7 +62,7 @@ app.post('/test', (req,res) => {
 
 app.listen((process.env.port || 3000), () => {
     console.log("starting search")
-    m4bFiles = findM4bFiles("./public");
+    m4bFiles = findM4bFiles("./data");
 
     console.log(`API listening on port: ${(process.env.port || 3000)}`)
 })

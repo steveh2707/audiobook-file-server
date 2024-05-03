@@ -20,10 +20,17 @@ function findM4bFiles(directoryPath, lastAccessedDate) {
                 stack.push(filePath);
             } else if (filePath.endsWith('.m4b')) {
                 const fileName = path.basename(filePath)
+                // const imageURLComponents = `${currentDir}/cover.jpg`.split("/")
+                // for (let i; i < imageURLComponents.length; i++) {
+                //     if (imageURLComponents[i].includes("#")) {
+                //         imageURLComponents[i] = encodeURIComponent(imageURLComponents[i])
+                //     }
+                // }
+
                 const newBook = {
                     "author": filePath.split("/")[1],
                     "title": fileName.split(".m4b")[0],
-                    "image": encodeURI(`${currentDir}/cover.jpg`),
+                    "image": encodeURLWithHash(`${currentDir}/cover.jpg`),
                     "series": getSeriesName(filePath),
                     "numInSeries": getNumInSeries(filePath),
                     "filePath": filePath,
@@ -98,6 +105,17 @@ function getNumInSeries(filePath) {
         }
     }
     return null; // If no item with "#" character found
+}
+
+
+function encodeURLWithHash(url) {
+    const parts = url.split("/");
+
+    const encodedParts = parts.map(part => {
+        return encodeURIComponent(part);
+    });
+
+    return encodedParts.join("/");
 }
 
 

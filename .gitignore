@@ -1,4 +1,4 @@
 .idea
 node_modules
-public/*
+data/*
 test.js
