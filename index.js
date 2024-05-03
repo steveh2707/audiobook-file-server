@@ -5,7 +5,7 @@ const app = express()
 const nunjucks = require("nunjucks")
 const { findM4bFiles, sortByAuthor } = require("./utils");
 
-const DIRECTORY_PATH = '/Volumes/steve/Media/Audiobooks/';
+// const DIRECTORY_PATH = '/Volumes/steve/Media/Audiobooks/';
 // const DIRECTORY_PATH = "/Volumes/steve/Media/Audiobooks/Ali Hazelwood"
 // const DIRECTORY_PATH = '/Volumes/steve/Media/Audiobooks/Alastair Reynolds'
 
@@ -20,6 +20,7 @@ const nunjucksConfig = {
 nunjucks.configure(appViews, nunjucksConfig)
 app.set('view engine', 'html')
 
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
     res.render('index', {audiobooks: m4bFiles})
@@ -58,11 +59,11 @@ app.post('/test', (req,res) => {
     console.log("after")
 })
 
-app.listen((process.env.port || 4000), () => {
+app.listen((process.env.port || 3000), () => {
     console.log("starting search")
-    // m4bFiles = findM4bFiles(DIRECTORY_PATH);
+    m4bFiles = findM4bFiles("./public");
 
-    console.log(`API listening on port: ${(process.env.port || 4000)}`)
+    console.log(`API listening on port: ${(process.env.port || 3000)}`)
 })
 
 module.exports = app

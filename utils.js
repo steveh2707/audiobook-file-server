@@ -20,9 +20,10 @@ function findM4bFiles(directoryPath, lastAccessedDate) {
                 stack.push(filePath);
             } else if (filePath.endsWith('.m4b')) {
                 const fileName = path.basename(filePath)
-                fileList.push({
-                    "author": filePath.split("/")[5],
+                const newBook = {
+                    "author": filePath.split("/")[1],
                     "title": fileName.split(".m4b")[0],
+                    "image": encodeURI(`${currentDir}/cover.jpg`),
                     "series": getSeriesName(filePath),
                     "numInSeries": getNumInSeries(filePath),
                     "filePath": filePath,
@@ -30,7 +31,9 @@ function findM4bFiles(directoryPath, lastAccessedDate) {
                     "fileName": fileName,
                     "fileSizeMB": Math.round(stat.size / 1000000),
                     "dateAdded": stat.birthtime
-                });
+                }
+                fileList.push(newBook);
+                console.log(newBook)
             }
         });
     }

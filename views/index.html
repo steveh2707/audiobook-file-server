@@ -26,6 +26,7 @@
     <table class="table table-striped align-middle table-hover sortable">
         <thead>
         <tr>
+            <th scope="col">Image</th>
             <th scope="col">Author</th>
             <th scope="col">Series</th>
             <th scope="col" class="col-4">Title</th>
@@ -39,6 +40,7 @@
 
         {% for audiobook in audiobooks %}
         <tr onclick="copyContent('{{audiobook.fileName}}')" style="cursor: pointer">
+            <td><img src={{audiobook.image}}></td>
             <td>{{audiobook.author}}</td>
             <td>{{audiobook.series}} {{audiobook.numInSeries}}</td>
             <td>{{audiobook.title}}</td>
