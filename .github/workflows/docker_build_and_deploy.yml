@@ -2,7 +2,7 @@ name: Docker Build & Deploy
 
 on:
   push:
-    branches: [ "*" ]
+    branches: [ "feat/cicd-pipeline" ]
   workflow_dispatch:
 
 jobs:
