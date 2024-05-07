@@ -41,7 +41,10 @@
 
         {% for audiobook in audiobooks %}
         <tr onclick="copyContent('{{audiobook.fileName}}')" style="cursor: pointer">
-            <td><img class="rounded" src={{audiobook.image}}></td>
+            <td class="parent">
+                <img class="rounded img-background" src={{audiobook.image}}>
+                <img class="rounded" src={{audiobook.image}}>
+            </td>
             <td>{{audiobook.author}}</td>
             <td>{{audiobook.series}} {{audiobook.numInSeries}}</td>
             <td>{{audiobook.title}}</td>
