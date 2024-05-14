@@ -5,9 +5,7 @@ const app = express()
 const nunjucks = require("nunjucks")
 const { findM4bFiles, sortByAuthor } = require("./utils");
 
-// const DIRECTORY_PATH = '/Volumes/steve/Media/Audiobooks/';
-// const DIRECTORY_PATH = "/Volumes/steve/Media/Audiobooks/Ali Hazelwood"
-// const DIRECTORY_PATH = '/Volumes/steve/Media/Audiobooks/Alastair Reynolds'
+const DIRECTORY_PATH = './data';
 
 let m4bFiles = []
 
@@ -62,7 +60,7 @@ app.post('/test', (req,res) => {
 
 app.listen((process.env.port || 3000), () => {
     console.log("starting search")
-    m4bFiles = findM4bFiles("./data");
+    m4bFiles = findM4bFiles(DIRECTORY_PATH);
 
     console.log(`API listening on port: ${(process.env.port || 3000)}`)
 })
