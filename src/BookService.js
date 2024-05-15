@@ -29,7 +29,7 @@ export class BookService {
     }
 
     addBook(path, stats) {
-        // log(path)
+        log(stats)
         if (this.bookRepository.getBookByFilePath(path)) {
             log(`File ${path} already exists in database`)
             return
