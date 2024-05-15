@@ -1,13 +1,14 @@
-const express = require('express')
-const fs = require("fs");
-const path = require("path");
-const app = express()
-const nunjucks = require("nunjucks")
-const { findM4bFiles, sortByAuthor } = require("./utils");
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import nunjucks from 'nunjucks';
+import {directoryWatcher, getBooks, initialiseDatabase} from "./src/service.js";
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const app = express();
 const DIRECTORY_PATH = './data';
-
-let m4bFiles = []
 
 const appViews = path.join(__dirname, '/views')
 const nunjucksConfig = {
@@ -22,13 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/data', express.static(path.join(__dirname, 'data')));
 
 app.get('/', (req, res) => {
-    res.render('index', {audiobooks: m4bFiles})
-})
-
-app.get('/refresh', (req, res) => {
-    console.log("starting search")
-    m4bFiles = findM4bFiles(DIRECTORY_PATH);
-    res.redirect("/")
+    res.render('index', {audiobooks: getBooks()})
 })
 
 app.get('/download', (req, res) => {
@@ -51,18 +46,11 @@ app.get('/download', (req, res) => {
     });
 })
 
-
-app.post('/test', (req,res) => {
-    console.log(`${new Date()} - Request received from Readarr`)
-    res.send("working")
-    console.log("after")
-})
-
 app.listen((process.env.port || 3000), () => {
-    console.log("starting search")
-    m4bFiles = findM4bFiles(DIRECTORY_PATH);
-
     console.log(`API listening on port: ${(process.env.port || 3000)}`)
 })
 
-module.exports = app
+initialiseDatabase()
+directoryWatcher(DIRECTORY_PATH)
+
+export { app }
