@@ -29,7 +29,6 @@ export class BookService {
     }
 
     addBook(path, stats) {
-        log(stats)
         if (this.bookRepository.getBookByFilePath(path)) {
             log(`File ${path} already exists in database`)
             return
@@ -49,7 +48,7 @@ export class BookService {
             "filePathEncoded": encodeURIComponent(path),
             "fileName": fileName,
             "fileSizeMB": Math.round(stats.size / 1000000),
-            "dateAdded": stats.birthtime
+            "dateAdded": stats.mtime.toISOString()
         }
 
         this.bookRepository.addBook(book)
