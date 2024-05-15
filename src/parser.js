@@ -6,15 +6,18 @@ function getNumInSeries(seriesNameAndNumber) {
     return seriesNameAndNumber.split('#')[1].split(' ')[0].trim();
 }
 
+function getImagePath(filePathComponents, imageName) {
+    const imageDirectory = filePathComponents.slice(0, -1)
+    imageDirectory.push(imageName)
 
-function encodeURLWithHash(url) {
-    const parts = url.split("/");
+    return encodeURLWithHash(imageDirectory)
+}
 
-    const encodedParts = parts.map(part => {
+function encodeURLWithHash(filePathComponents) {
+    const encodedParts = filePathComponents.map(part => {
         return encodeURIComponent(part);
     });
-
     return encodedParts.join("/");
 }
 
-export { getSeriesName, getNumInSeries, encodeURLWithHash }
+export { getSeriesName, getNumInSeries, getImagePath }

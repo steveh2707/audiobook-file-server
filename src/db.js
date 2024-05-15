@@ -26,7 +26,7 @@ function createDatabase() {
         fileSizeMB INT,
         dateAdded DATE NOT NULL
     )
-`
+    `
     db.exec(query)
 }
 
@@ -38,10 +38,6 @@ function addBookToDatabase(book) {
     insertBook.run(book.author, book.title, book.series, book.numInSeries, book.filePath, book.filePathEncoded, book.fileName, book.image, book.fileSizeMB, String(book.dateAdded))
 }
 
-function deleteBookFromDatabase() {
-
-}
-
 function getBooksFromDatabase() {
     const query = 'SELECT * FROM audiobooks'
     return db.prepare(query).all()
@@ -49,8 +45,12 @@ function getBooksFromDatabase() {
 
 function getBookByFilePath(filePath) {
     const query = `SELECT * FROM audiobooks WHERE filePath = ?`
-    const book = db.prepare(query).get(filePath)
-    return book
+    return db.prepare(query).get(filePath)
 }
 
-export { databaseExists, createDatabase, addBookToDatabase, getBooksFromDatabase, getBookByFilePath }
+function deleteBookByFilePath(filePath) {
+    const query = 'DELETE FROM audiobooks WHERE filePath = ?'
+    return db.prepare(query).run(filePath)
+}
+
+export { databaseExists, createDatabase, addBookToDatabase, getBooksFromDatabase, getBookByFilePath, deleteBookByFilePath }
