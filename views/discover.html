@@ -50,7 +50,7 @@
     <br/>
     <h4>By Series</h4>
     <div class="scroll card-container">
-        {% for audiobook in audiobooks|sort(attribute='series')|sort(attribute='numInSeries') %}
+        {% for audiobook in audiobooks|sort(attribute='numInSeries')|sort(attribute='series') %}
         {% if audiobook.series != "" %}
         {{ card(audiobook) }}
         {% endif %}
