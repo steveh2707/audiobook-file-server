@@ -2,27 +2,44 @@ body {
     color: black;
 }
 
+p {
+    margin-bottom: 2px;
+}
+
 img {
-    width: 100px;
-    height: 150px;
+    width: 224px;
+    height: 336px;
     object-fit: contain;
     position: relative;
-    top: 0;
-    left: 0;
 }
 
 .img-background {
-    width: 100px;
-    height: 150px;
+    width: 224px;
+    height: 336px;
     object-fit: fill;
     filter: blur(5px);
     position: absolute;
-    top: 8px;
-    left: 8px;
 }
 
 .parent {
     position: relative;
     top: 0;
     left: 0;
+}
+
+div.scroll {
+    overflow: auto;
+    white-space: nowrap;
+    padding-bottom: 15px;
+}
+
+.card {
+    overflow: hidden;
+    width: 224px;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
 }
