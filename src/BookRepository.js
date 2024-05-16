@@ -23,16 +23,18 @@ export class BookRepository {
             CREATE TABLE audiobooks
             (
                 id              INTEGER PRIMARY KEY,
-                author          STRING NOT NULL,
-                title           STRING NOT NULL,
+                author          STRING            NOT NULL,
+                title           STRING            NOT NULL,
                 series          STRING,
                 numInSeries     STRING,
-                filePath        STRING NOT NULL,
-                filePathEncoded STRING NOT NULL,
-                fileName        STRING NOT NULL,
+                filePath        STRING            NOT NULL,
+                filePathEncoded STRING            NOT NULL,
+                fileName        STRING            NOT NULL,
                 imagePath       STRING,
-                fileSizeMB      INT,
-                dateAdded       DATE   NOT NULL
+                fileSizeMB      INTEGER,
+                dateAdded       DATE              NOT NULL,
+                read            INTEGER DEFAULT 0 NOT NULL,
+                readOrder       INTEGER DEFAULT 0 NOT NULL
             )
         `
         this.db.exec(query)
@@ -56,6 +58,11 @@ export class BookRepository {
         `)
         insertBook.run(book.author, book.title, book.series, book.numInSeries, book.filePath, book.filePathEncoded,
             book.fileName, book.image, book.fileSizeMB, String(book.dateAdded))
+    }
+
+    updateReadStatus(id, isRead) {
+        const updateBook = this.db.prepare(`UPDATE audiobooks SET read = ? WHERE id = ?`)
+        updateBook.run(isRead ? 1 : 0, id)
     }
 
     deleteBookByFilePath(filePath) {

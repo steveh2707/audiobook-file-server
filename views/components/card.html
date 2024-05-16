@@ -1,0 +1,48 @@
+{% macro card(audiobook) %}
+<div class="col" style="flex: none">
+        <div class="card h-100" style="margin-right: 20px">
+
+            <img class="card-image rounded img-background" src={{audiobook.imagePath}} alt="...">
+            <img class="card-image rounded" src={{audiobook.imagePath}} alt="...">
+
+            <div class="card-img-overlay">
+
+                <div style="float: right">
+                    <form action="/{{'unread' if audiobook.read else 'read'}}/{{audiobook.id}}" method="POST">
+                        <button class="btn btn-light">
+                            {% if audiobook.read === 0 %}
+                            <i class="bi bi-circle" style="color: orange;"></i>
+                            {% else %}
+                            <i class="bi bi-check-circle-fill" style="color: limegreen;"></i>
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+
+                <div style="height: 270px"></div>
+
+                <div style="float: left">
+                    <button onclick="copyContent('{{audiobook.fileName}}')" class="btn btn-success">
+                        <i class="bi bi-copy"></i>
+                    </button>
+                </div>
+
+                <div style="float: right">
+                    <a class="btn btn-primary" id="{{audiobook.fileName}}"
+                       href="download?fileName={{audiobook.fileName}}&filePath={{audiobook.filePathEncoded}}">
+                        <i class="bi bi-download"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <h6 class="card-title">{{audiobook.title}}</h6>
+                <h6 class="card-subtitle mb-2 text-body-secondary">{{audiobook.author}}</h6>
+                <p class="card-text">{{audiobook.series}} {{audiobook.numInSeries}}</p>
+            </div>
+            <div class="card-footer">
+                <small class="text-body-secondary">Added {{audiobook.daysAgo }} days ago</small>
+            </div>
+        </div>
+</div>
+{% endmacro %}

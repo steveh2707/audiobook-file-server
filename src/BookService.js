@@ -25,7 +25,12 @@ export class BookService {
     }
 
     getAllBooks() {
-        return this.bookRepository.getAllBooks()
+        const now = new Date()
+
+        const booksFromDatabase = this.bookRepository.getAllBooks()
+        const books = booksFromDatabase.map(book => ({...book, daysAgo: Math.round((now - new Date(book.dateAdded))/86400000)}))
+
+        return books
     }
 
     addBook(path, stats) {
@@ -53,6 +58,16 @@ export class BookService {
 
         this.bookRepository.addBook(book)
         log(`File ${path} added to database`)
+    }
+
+    markBookAsRead(id) {
+        this.bookRepository.updateReadStatus(id, true)
+        log(`Book id ${id} marked as read`)
+    }
+
+    markBookAsUnread(id) {
+        this.bookRepository.updateReadStatus(id, false)
+        log(`Book id ${id} marked as unread`)
     }
 
     deleteBook(path) {
