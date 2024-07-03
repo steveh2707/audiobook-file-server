@@ -4,13 +4,10 @@ import {Book} from "./Book.js";
 const log = console.log.bind(console);
 
 export class BookService {
-    constructor(bookRepository, directory, converter, mover) {
+    constructor(bookRepository, directory) {
         this.bookRepository = bookRepository
         this.directory = directory
-        this.converter = converter
-        this.mover = mover
         this.startDirectoryWatcher()
-        this.lastConvertedBookPath = ""
     }
 
     startDirectoryWatcher() {
