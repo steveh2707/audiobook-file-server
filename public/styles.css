@@ -43,3 +43,7 @@ div.scroll {
     flex-wrap: nowrap;
     justify-content: flex-start;
 }
+
+.btn {
+    padding: 12px;
+}

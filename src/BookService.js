@@ -1,63 +1,75 @@
 import chokidar from "chokidar";
-import {getImagePath, getNumInSeries, getSeriesName} from "./BookParser.js";
+import {Book} from "./Book.js";
 
 const log = console.log.bind(console);
 
 export class BookService {
-    constructor(bookRepository, directory) {
+    constructor(bookRepository, directory, converter, mover) {
         this.bookRepository = bookRepository
         this.directory = directory
-        this.directoryWatcher()
+        this.converter = converter
+        this.mover = mover
+        this.startDirectoryWatcher()
+        this.lastConvertedBookPath = ""
     }
 
-    directoryWatcher() {
+    startDirectoryWatcher() {
         const watcher = chokidar.watch(this.directory, {
-            ignored: ['**/*.!(m4b)', '**/tmpfiles/**', '**/_ss/**', '**/.*'],
+            ignored: ['**/*.!(m4b|mp3)', '**/tmpfiles/**', '**/_ss/**', '**/.*'],
             persistent: true,
-            awaitWriteFinish: true
+            awaitWriteFinish: {
+                stabilityThreshold: 20000,
+                pollInterval: 100
+            }
         });
         log("Initialised directory watcher")
         watcher
-            .on('add', (path, stats) => this.addBook(path,stats))
+            .on('ready', () => log('Initial scan complete. Ready for changes'))
+            .on('add', (path, stats) => this.handleAddedFile(path,stats))
             .on('change', path => log(`File ${path} has been changed`))
             .on('unlink', path => this.deleteBook(path))
             .on('error', error => log(`Watcher error: ${error}`))
     }
 
-    getAllBooks() {
-        const now = new Date()
+    handleAddedFile(fileWithPath, stats) {
+        if (this.bookRepository.getBookByFilePath(fileWithPath)) {
+            log(`File ${fileWithPath} already exists in database`)
 
-        const booksFromDatabase = this.bookRepository.getAllBooks()
-        const books = booksFromDatabase.map(book => ({...book, daysAgo: Math.round((now - new Date(book.dateAdded))/86400000)}))
+        } else if (fileWithPath.endsWith(".mp3")) {
+            // TODO: Check if all files have been added
+            // const filePathComponents = fileWithPath.split("/")
+            // const directory = filePathComponents.slice(0, filePathComponents.length - 1).join("/")
+            //
+            // if (this.lastConvertedBookPath === directory) {
+            //     return
+            // }
+            // const title = filePathComponents[filePathComponents.length-1].replace(/\s*\(.*?\)\s*\..*$/, '')
+            // this.converter.setUpShell()
+            // this.converter.mergeAndConvertToM4B(directory, title)
+            // this.mover.moveProcessedFiles(directory)
 
-        return books
+            // this.lastConvertedBookPath = directory
+        } else {
+            const book = new Book(fileWithPath, stats)
+            this.addBook(book)
+        }
     }
 
-    addBook(path, stats) {
-        if (this.bookRepository.getBookByFilePath(path)) {
-            log(`File ${path} already exists in database`)
-            return
-        }
+    addBook(book) {
+        this.bookRepository.addBook(book.getBookDetails())
 
-        const filePathComponents = path.split("/")
-        const isBookInASeries = filePathComponents[2].includes("#")
-        const fileName = filePathComponents[filePathComponents.length - 1]
+        log(`File ${book.filePath} added to database`)
+    }
 
-        const book = {
-            "author": filePathComponents[1],
-            "title": fileName.split(".m4b")[0],
-            "image": getImagePath(filePathComponents, "cover.jpg"),
-            "series": isBookInASeries ? getSeriesName(filePathComponents[2]) : "",
-            "numInSeries": isBookInASeries ? getNumInSeries(filePathComponents[2]) : "",
-            "filePath": path,
-            "filePathEncoded": encodeURIComponent(path),
-            "fileName": fileName,
-            "fileSizeMB": Math.round(stats.size / 1000000),
-            "dateAdded": stats.mtime.toISOString()
-        }
-
-        this.bookRepository.addBook(book)
-        log(`File ${path} added to database`)
+    getAllBooks() {
+        const now = new Date()
+        const booksFromDatabase = this.bookRepository.getAllBooks()
+        return booksFromDatabase.map(book => (
+            {
+                ...book,
+                daysAgo: Math.round((now - new Date(book.dateAdded))/86400000)
+            }
+        ))
     }
 
     markBookAsRead(id) {
@@ -71,6 +83,9 @@ export class BookService {
     }
 
     deleteBook(path) {
+        if (path.endsWith(".mp3")) {
+            return
+        }
         this.bookRepository.deleteBookByFilePath(path)
         log(`File ${path} deleted from database`)
     }

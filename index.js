@@ -7,6 +7,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import {BookRepository} from "./src/BookRepository.js";
 import Database from "better-sqlite3";
+import {Converter} from "./src/Converter.js";
+import {Mover} from "./src/Mover.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIRECTORY_PATH = './data';
@@ -14,7 +16,9 @@ const app = express();
 
 let db = new Database('appdata/app.db')
 const bookRepository = new BookRepository(db);
-const bookService = new BookService(bookRepository, DIRECTORY_PATH);
+const converter = new Converter();
+const mover = new Mover();
+const bookService = new BookService(bookRepository, DIRECTORY_PATH, converter, mover);
 
 const appViews = path.join(__dirname, '/views')
 const nunjucksConfig = {
