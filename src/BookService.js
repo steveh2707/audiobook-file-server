@@ -14,7 +14,6 @@ export class BookService {
         const watcher = chokidar.watch(this.directory, {
             ignored: [
                 // '**/*.!(m4b|mp3)',
-                // '**/*.*(?!m4b|mp3)',
                 '**/tmpfiles/**',
                 '**/_ss/**',
                 '**/.*'
