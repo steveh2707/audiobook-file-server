@@ -12,7 +12,13 @@ export class BookService {
 
     startDirectoryWatcher() {
         const watcher = chokidar.watch(this.directory, {
-            ignored: ['**/*.!(m4b|mp3)', '**/tmpfiles/**', '**/_ss/**', '**/.*'],
+            ignored: [
+                // '**/*.!(m4b|mp3)',
+                // '**/*.*(?!m4b|mp3)',
+                '**/tmpfiles/**',
+                '**/_ss/**',
+                '**/.*'
+            ],
             persistent: true,
             awaitWriteFinish: {
                 stabilityThreshold: 20000,
@@ -29,10 +35,8 @@ export class BookService {
     }
 
     handleAddedFile(fileWithPath, stats) {
-        if (this.bookRepository.getBookByFilePath(fileWithPath)) {
-            log(`File ${fileWithPath} already exists in database`)
-
-        } else if (fileWithPath.endsWith(".mp3")) {
+        if (fileWithPath.endsWith(".mp3")) {
+            return
             // TODO: Check if all files have been added
             // const filePathComponents = fileWithPath.split("/")
             // const directory = filePathComponents.slice(0, filePathComponents.length - 1).join("/")
@@ -46,10 +50,16 @@ export class BookService {
             // this.mover.moveProcessedFiles(directory)
 
             // this.lastConvertedBookPath = directory
-        } else {
-            const book = new Book(fileWithPath, stats)
-            this.addBook(book)
         }
+        if (!fileWithPath.endsWith(".m4b")) {
+            return
+        }
+        if (this.bookRepository.getBookByFilePath(fileWithPath)) {
+            return log(`File ${fileWithPath} already exists in database`)
+        }
+
+        const book = new Book(fileWithPath, stats)
+        this.addBook(book)
     }
 
     addBook(book) {
