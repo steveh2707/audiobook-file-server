@@ -60,9 +60,18 @@ export class BookRepository {
             book.fileName, book.image, book.fileSizeMB, String(book.dateAdded))
     }
 
-    updateReadStatus(id, isRead) {
+    setReadStatus(id, readStatus) {
         const updateBook = this.db.prepare(`UPDATE audiobooks SET read = ? WHERE id = ?`)
-        updateBook.run(isRead ? 1 : 0, id)
+        updateBook.run(readStatus ? 1 : 0, id)
+    }
+
+    setReadNext(id, value) {
+        const setQuery = this.db.prepare('UPDATE audiobooks SET readOrder = ? WHERE id = ?')
+        setQuery.run(value, id)
+    }
+
+    getMaxReadNextValue() {
+        return this.db.prepare('SELECT MAX(readOrder) as max FROM audiobooks').get()["max"]
     }
 
     deleteBookByFilePath(filePath) {
