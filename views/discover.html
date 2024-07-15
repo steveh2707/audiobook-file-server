@@ -5,6 +5,7 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js"></script>
 </head>
 <body>
 <nav class="navbar bg-body-tertiary">
@@ -29,7 +30,8 @@
 
     <br/>
     <h4>Read Next</h4>
-    <div class="scroll card-container">
+    <button class="btn btn-primary" id="saveCurrOrder">Save order</button>
+    <div class="scroll card-container wrapper">
         {% for audiobook in audiobooks|sort(false, true, 'readOrder') %}
         {% if audiobook.readOrder > 0 %}
         {{ card(audiobook) }}
@@ -61,7 +63,29 @@
 </body>
 </html>
 
+<script>
+    const dragArea = document.querySelector(".wrapper");
 
+    var sortable = new Sortable(dragArea, {
+        animation: 350
+    });
+    var initialOrder = sortable.toArray();
+
+    // Send to Server
+    document.getElementById('saveCurrOrder').addEventListener('click', function(e) {
+        var order = sortable.toArray();
+        var json = '{"order":' + JSON.stringify(order) + '}';
+        fetch('/saveorder/', {
+            method: 'POST',
+            body: json,
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            }
+        })
+    });
+
+
+</script>
 <script>
     const copyContent = async (id) => {
         let text = document.getElementById(id);

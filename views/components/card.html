@@ -1,5 +1,5 @@
 {% macro card(audiobook) %}
-<div class="col" style="flex: none">
+<div class="col" style="flex: none" data-id={{audiobook.id}}>
         <div class="card h-100" style="margin-right: 20px">
 
             <img class="card-image rounded img-background" src={{audiobook.imagePath}} alt="...">
@@ -7,19 +7,14 @@
 
             <div class="card-img-overlay">
                 <div style="float: left">
-                    <form action="/{{'addtoread' if audiobook.readOrder == 0 else 'removefromread'}}/{{audiobook.id}}" method="POST">
-                        {% if audiobook.readOrder === 0 %}
+                    <form action="/{{'read-next' if audiobook.readOrder == 0 else 'read-next-remove'}}/{{audiobook.id}}" method="POST">
                         <button class="btn btn-light">
-
+                            {% if audiobook.readOrder === 0 %}
                             <i class="bi bi-plus-square" style="color: green"></i>
-
-<!--                            <i class="bi bi-check-square-fill" style="color: green;"></i>-->
-<!--                            <div style="font-size: 10px;">-->
-<!--                            {{ audiobook.readOrder }}-->
-<!--                            </div>-->
-
+                            {% else %}
+                            <i class="bi bi-plus-square-fill" style="color: green"></i>
+                            {% endif %}
                         </button>
-                        {% endif %}
                     </form>
                 </div>
 

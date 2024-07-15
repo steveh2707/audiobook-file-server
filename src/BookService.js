@@ -79,13 +79,28 @@ export class BookService {
     }
 
     markBookAsRead(id) {
-        this.bookRepository.updateReadStatus(id, true)
+        this.bookRepository.setReadStatus(id, true)
         log(`Book id ${id} marked as read`)
     }
 
     markBookAsUnread(id) {
-        this.bookRepository.updateReadStatus(id, false)
+        this.bookRepository.setReadStatus(id, false)
         log(`Book id ${id} marked as unread`)
+    }
+
+    addBookToReadNext(id) {
+        const maxValue = this.bookRepository.getMaxReadNextValue()
+        this.bookRepository.setReadNext(id, maxValue+1)
+    }
+
+    removeBookFromReadNext(id) {
+        this.bookRepository.setReadNext(id, 0)
+    }
+
+    saveReadNextOrder(order) {
+        for (let i = 0; i < order.length; i++) {
+            this.bookRepository.setReadNext(order[i], i+1)
+        }
     }
 
     deleteBook(path) {
