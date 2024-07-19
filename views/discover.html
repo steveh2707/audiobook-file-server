@@ -30,7 +30,6 @@
 
     <br/>
     <h4>Read Next</h4>
-    <button class="btn btn-primary" id="saveCurrOrder">Save order</button>
     <div class="scroll card-container wrapper">
         {% for audiobook in audiobooks|sort(false, true, 'readOrder') %}
         {% if audiobook.readOrder > 0 %}
@@ -64,27 +63,25 @@
 </html>
 
 <script>
-    const dragArea = document.querySelector(".wrapper");
+    const sortableList = document.querySelector(".wrapper");
 
-    var sortable = new Sortable(dragArea, {
-        animation: 350
+    const sortable = new Sortable(sortableList, {
+        animation: 350,
+        onEnd: function () {
+            updateOrder();
+        }
     });
-    var initialOrder = sortable.toArray();
 
-    // Send to Server
-    document.getElementById('saveCurrOrder').addEventListener('click', function(e) {
-        var order = sortable.toArray();
-        var json = '{"order":' + JSON.stringify(order) + '}';
+    function updateOrder() {
+        const order = sortable.toArray();
         fetch('/saveorder/', {
             method: 'POST',
-            body: json,
+            body: '{"order":' + JSON.stringify(order) + '}',
             headers: {
                 'Content-type': 'application/json; charset=UTF-8'
             }
         })
-    });
-
-
+    }
 </script>
 <script>
     const copyContent = async (id) => {

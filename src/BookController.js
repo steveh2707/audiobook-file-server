@@ -35,7 +35,6 @@ const bookController = (bookService) => {
     router.post('/saveorder', (req, res) => {
         const order = req.body.order
         bookService.saveReadNextOrder(order)
-        res.redirect('/')
     })
 
     router.get('/download', (req, res) => {
